@@ -129,11 +129,11 @@ The ArgenTag pipeline is provided as an executable file. No specific installatio
 2. Navigate to the directory where this executable is located
 3. Make the binary executable if it isn't already:
 
-   chmod +x at_pipeline_part1
+   chmod +x at_pipeline_part1_v2
 
 4. Run the command with the required parameters:
 
-./at_pipeline_part1 --output_dir /path/output --experiment_name experiment_name \
+./at_pipeline_part1_v2 --output_dir /path/output --experiment_name experiment_name \
 --minimap2_path /path/minimap2 --k8_path /path/k8 \
 --genome_mmi /path/genome.mmi --genome_fa /path/genome.fa \
 --annot_gtf /path/annotation.gtf --config_file /path/config.json \
@@ -198,7 +198,7 @@ It's recommended to run the pipeline within a screen session to prevent interrup
 screen -S argentag_run
 
 # Run the pipeline within the screen session
-./at_pipeline_part1 [arguments]
+./at_pipeline_part1_v2 [arguments]
 
 # Detach from the screen session (without stopping the process)
 # Press Ctrl+A, then D
@@ -226,7 +226,7 @@ CONFIG_FILE="/.../config_sclr_ont_ss.json"
 DEMUX_DIR="/.../raw_data_example"
 THREADS=60
 
-./at_pipeline_part1 --output_dir "$OUTPUT_DIR" \
+./at_pipeline_part1_v2 --output_dir "$OUTPUT_DIR" \
 --experiment_name "$EXPERIMENT_NAME" \
 --demux_dir "$DEMUX_DIR" \
 --minimap2_path "$MINIMAP2_PATH" \
@@ -315,7 +315,7 @@ Please enter your selection (1-8) and press Enter: 7
 A key feature of our pipeline architecture is the ability to skip steps that have already been successfully executed or resume execution from an intermediate point. This is particularly useful when a process is interrupted and you need to restart without repeating already completed work. For example:
 
 ```bash
-./at_pipeline_part1 --output_dir /path/output --experiment_name experiment_name \
+./at_pipeline_part1_v2 --output_dir /path/output --experiment_name experiment_name \
 --minimap2_path /path/minimap2 --k8_path /path/k8 \
 --genome_mmi /path/genome.mmi --genome_fa /path/genome.fa \
 --annot_gtf /path/annotation.gtf --config_file /path/config.json \
