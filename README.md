@@ -51,7 +51,7 @@ ArgenTag consists of the following main modules:
 - Generates gene and transcript count matrices from minimap2 alignment of FASTQ cell files to a genome reference and its GTF annotation file
 - Produces gene and isoform GTF annotation files
 
-This module reuses parts of the Bioconductor FLAMES code (version 2.1.7) [https://github.com/mritchielab/FLAMES/](https://github.com/mritchielab/FLAMES/) for transcript quantification and isoform annotation.
+This module reuses parts of the Bioconductor FLAMES code (version 2.3.2) [https://github.com/mritchielab/FLAMES/](https://github.com/mritchielab/FLAMES/) for transcript quantification and isoform annotation.
 
 ### AT ISe (Not Included)
 
@@ -121,7 +121,7 @@ The ArgenTag pipeline is provided as an executable file. No specific installatio
 #### Usage
 
 ```bash
-# AT DA Pipeline v1.0.1
+# AT DA Pipeline v1.0.2
 ## Usage Instructions:
 -------------------
 
