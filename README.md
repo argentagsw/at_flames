@@ -173,19 +173,22 @@ minimap2 -x splice -k14 --seed 2022 -t [threads] -d genome.mmi genome.fa
 
 **FLAMES Configuration**
 
-The pipeline requires a FLAMES configuration file in JSON format. You can download the default configuration file from the FLAMES GitHub repository:
+The pipeline requires a FLAMES configuration file in JSON format, which is provided via the `--config_file` parameter when running the pipeline. You can [download an example configuration file here](config_sclr_ont_ss_8.json) (set for 8 threads).
 
-https://github.com/mritchielab/FLAMES/blob/devel/inst/extdata/config_sclr_nanopore_3end.json
-
-Download this file and specify its path in the `--config_file` parameter when running the pipeline.
-
-**IMPORTANT:** When using the FLAMES configuration file, ensure that the `"do_barcode_demultiplex"` parameter is set to `false`:
+**IMPORTANT:** If you are using FLAMES' standard configuration file, please make sure that the `"do_barcode_demultiplex"`, `"bambu_isoform_identification"`,  and  `"oarfish_quantification"` parameters are set to `false`:
 
 ```json
 "pipeline_parameters": {
     ...
-    "do_barcode_demultiplex": false,
-    ...
+    **"do_barcode_demultiplex": false,**
+    "do_gene_quantification": true,
+    "do_genome_alignment": true,
+    "do_isoform_identification": true,
+    **"bambu_isoform_identification": false,**
+    "multithread_isoform_identification": false,
+    "do_read_realignment": true,
+    "do_transcript_quantification": true,
+    **"oarfish_quantification": false**
 }
 ```
 
