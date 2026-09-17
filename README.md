@@ -1,8 +1,11 @@
 # ArgenTag Pipeline README
 
-**Version: AT_25.03.01**
+**Version: AT_25.03.01** (binary `at_pipeline_part1_v2` v1.0.2)
 
-**IMPORTANT NOTE**: This software package only includes the **AT CellExtractor** and **AT FlamesCounter** modules of the full ArgenTag pipeline. Other modules referenced in the documentation are separate tools.
+**Requires: FLAMES ≥ 2.3.3** (recommended: ≥ 2.4.2)
+
+> [!NOTE]
+> This software package only includes the **AT CellExtractor** and **AT FlamesCounter** modules of the full ArgenTag pipeline. Other modules referenced in the documentation are separate tools.
 
 ## Table of Contents
 
@@ -51,7 +54,12 @@ ArgenTag consists of the following main modules:
 - Generates gene and transcript count matrices from minimap2 alignment of FASTQ cell files to a genome reference and its GTF annotation file
 - Produces gene and isoform GTF annotation files
 
-This module reuses parts of the Bioconductor FLAMES code (version 2.3.2) [https://github.com/mritchielab/FLAMES/](https://github.com/mritchielab/FLAMES/) for transcript quantification and isoform annotation.
+This module uses the Bioconductor FLAMES package [https://github.com/mritchielab/FLAMES/](https://github.com/mritchielab/FLAMES/) for transcript quantification and isoform annotation.
+
+> [!IMPORTANT]
+> **FLAMES 2.3.3 or newer is required** (2.4.2 recommended). The pipeline passes the pre-built
+> minimap2 index (`--genome_mmi`, the `.mmi` file) to FLAMES, and support for this was introduced
+> in FLAMES 2.3.3. Older versions cannot use the `.mmi` file and fail at step 7.
 
 ### AT ISe (Not Included)
 
@@ -101,12 +109,12 @@ For detailed methodologies, please refer to the respective documentation for Seu
 
 ### System Requirements
 
-- Python 3.6 or higher
-- R with required packages:
-  - remotes
-  - Cairo
-  - FLAMES
-- minimap2 and k8 installed and accessible
+- Python 3.8 or higher, with `matplotlib`
+- R (≥ 4.5 for FLAMES 2.4.2) with required packages:
+  - FLAMES **≥ 2.3.3** (recommended 2.4.2)
+  - optparse, jsonlite
+  - DropletUtils, ggplot2, scales, reticulate, svglite
+- minimap2 and k8 installed and executable (`chmod +x`)
 - Reference files:
   - Genome FASTA file (.fa)
   - Genome index file (.mmi)
@@ -114,7 +122,10 @@ For detailed methodologies, please refer to the respective documentation for Seu
 
 ### Installation
 
-The ArgenTag pipeline is provided as an executable file. No specific installation is required beyond ensuring that all prerequisites are met.
+The ArgenTag pipeline is provided as an executable file. No specific installation is required beyond ensuring that all prerequisites are met. The binary calls `Rscript` and `python3` from your `PATH`, so the R and Python packages above must be available in the environment where you launch it.
+
+> [!CAUTION]
+> The FLAMES authors recommend running FLAMES from their Docker/Singularity images **rather than from conda** (see the [FLAMES README](https://github.com/mritchielab/FLAMES/)). If containers are not an option on your system, see **[Setting up FLAMES with conda](conda_setup.md)** for a tested, no-sudo installation.
 
 ### Running the Pipeline
 
@@ -175,26 +186,30 @@ minimap2 -x splice -k14 --seed 2022 -t [threads] -d genome.mmi genome.fa
 
 The pipeline requires a FLAMES configuration file in JSON format, which is provided via the `--config_file` parameter when running the pipeline. You can [download an example configuration file here](config_sclr_ont_ss_8.json) (set for 8 threads).
 
-**IMPORTANT:** If you are using FLAMES' standard configuration file, please make sure that the `"do_barcode_demultiplex"`, `"bambu_isoform_identification"`,  and  `"oarfish_quantification"` parameters are set to `false`:
-
-```json
-"pipeline_parameters": {
-    ...
-    **"do_barcode_demultiplex": false,**
-    "do_gene_quantification": true,
-    "do_genome_alignment": true,
-    "do_isoform_identification": true,
-    **"bambu_isoform_identification": false,**
-    "multithread_isoform_identification": false,
-    "do_read_realignment": true,
-    "do_transcript_quantification": true,
-    **"oarfish_quantification": false**
-}
-```
+> [!IMPORTANT]
+> If you are using FLAMES' standard configuration file, please make sure that the
+> `"do_barcode_demultiplex"`, `"bambu_isoform_identification"` and `"oarfish_quantification"`
+> parameters are set to `false`:
+>
+> ```json
+> "pipeline_parameters": {
+>     ...
+>     "do_barcode_demultiplex": false,
+>     "do_gene_quantification": true,
+>     "do_genome_alignment": true,
+>     "do_isoform_identification": true,
+>     "bambu_isoform_identification": false,
+>     "multithread_isoform_identification": false,
+>     "do_read_realignment": true,
+>     "do_transcript_quantification": true,
+>     "oarfish_quantification": false
+> }
+> ```
 
 #### Using Screen Sessions
 
-It's recommended to run the pipeline within a screen session to prevent interruptions in case your connection drops. Screen allows you to run processes in the background and reconnect to them later.
+> [!TIP]
+> It's recommended to run the pipeline within a screen session to prevent interruptions in case your connection drops. Screen allows you to run processes in the background and reconnect to them later.
 
 ```bash
 # Start a new screen session
@@ -270,7 +285,8 @@ The pipeline execution is organized into the following steps:
 7. **FLAMES Pipeline Execution**  
    Runs the FLAMES analysis pipeline for gene and isoform detection and quantification.
 
-Note: All steps after this point would require additional tools not included in this package.
+> [!NOTE]
+> All steps after this point would require additional tools not included in this package.
 
 ### Directory Structure
 
@@ -293,7 +309,10 @@ The pipeline will automatically generate the following directory structure:
 
 ### Interactive Step
 
-Step 3 (Elbow Analysis) requires user interaction. The script will display information about potential cutoff thresholds and show the path to a generated graph that helps with decision support. You will be prompted to review this visualization and select an appropriate threshold for cell calling based on the barcode count distribution.
+> [!IMPORTANT]
+> Step 3 (Elbow Analysis) requires user interaction.
+
+The script will display information about potential cutoff thresholds and show the path to a generated graph that helps with decision support. You will be prompted to review this visualization and select an appropriate threshold for cell calling based on the barcode count distribution.
 
 **Example:**
 
@@ -335,5 +354,6 @@ The pipeline generates comprehensive logs in the `[experiment_name]/Logs/` direc
 
 If you encounter errors during execution:
 
-- Review the log files in the `logs/` directory
+- Review the log files in the `Logs/` directory
 - Verify that all provided paths are absolute and correct
+- If step 7 fails, check the installed FLAMES version: `Rscript -e 'packageVersion("FLAMES")'` must report 2.3.3 or newer
