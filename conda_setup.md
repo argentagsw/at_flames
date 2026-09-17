@@ -1,6 +1,6 @@
 # Setting up FLAMES with conda
 
-[← Back to the main README](../README.md)
+[← Back to the main README](README.md)
 
 This page describes how to prepare an R/Python environment for `at_pipeline_part1_v2` using conda.
 The environment installs into your own conda prefix, so **no sudo or administrator access is required**. 
